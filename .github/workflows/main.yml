@@ -1,9 +1,32 @@
-name: runner-test
-on: workflow_dispatch
+name: qa-runner-test
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
 jobs:
   test:
-    runs-on: [self-hosted, azure, vmss]
+    runs-on:
+      group: QA-Runner
+      labels: [self-hosted, azure, vmss]
     steps:
-      - run: hostname
-      - run: docker --version
-      - run: node -v
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Runner info
+        run: |
+          echo "Runner : $(hostname)"
+          echo "OS     : $(lsb_release -ds)"
+
+      - name: Tool check
+        run: |
+          git --version
+          docker --version
+          node -v
+          python3 --version
+          dotnet --version
+          az version --query '"azure-cli"' -o tsv
+
+      - name: Docker test
+        run: docker run --rm hello-world
