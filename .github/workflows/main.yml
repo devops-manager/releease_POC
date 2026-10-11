@@ -1,1 +1,9 @@
-runs-on: [self-hosted, azure, vmss]
+name: runner-test
+on: workflow_dispatch
+jobs:
+  test:
+    runs-on: [self-hosted, azure, vmss]
+    steps:
+      - run: hostname
+      - run: docker --version
+      - run: node -v
